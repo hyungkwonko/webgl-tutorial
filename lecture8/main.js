@@ -132,9 +132,11 @@ const uniformLocation = {
 };
 
 const mat4 = glMatrix.mat4;
-const matrix = mat4.create();
 
+const modelMatrix = mat4.create();
+const viewMatrix = mat4.create();
 const projectionMatrix = mat4.create();
+
 mat4.perspective(projectionMatrix, 
     75 * Math.PI / 180,
     canvas.width / canvas.height,
@@ -142,21 +144,19 @@ mat4.perspective(projectionMatrix,
     1e4, // far-cull distance
 );
 
-const finalMatrix = mat4.create();
+const mvMatrix = mat4.create();
+const mvpMatrix = mat4.create();
 
-mat4.translate(matrix, matrix, [.2, .5, -2]);
-// mat4.scale(matrix, matrix, [.5, .5, .5]);
+mat4.translate(modelMatrix, modelMatrix, [-1.5, 0, -2]);
+mat4.translate(viewMatrix, viewMatrix, [-3, 0, 1]);
+mat4.invert(viewMatrix, viewMatrix);
 
 function animate() {
     requestAnimationFrame(animate);
-    mat4.rotateZ(matrix, matrix, Math.PI / 100);
-    mat4.rotateX(matrix, matrix, Math.PI / 100);
-    mat4.multiply(finalMatrix, projectionMatrix, matrix);
-    gl.uniformMatrix4fv(uniformLocation.matrix, false, finalMatrix);
+    mat4.multiply(mvMatrix, viewMatrix, modelMatrix);
+    mat4.multiply(mvpMatrix, projectionMatrix, mvMatrix);
+    gl.uniformMatrix4fv(uniformLocation.matrix, false, mvpMatrix);
     gl.drawArrays(gl.TRIANGLES, 0, vertexData.length / 3);
 };
 
 animate();
-
-// gl.uniformMatrix4fv(uniformLocation.matrix, false, matrix);
-// gl.drawArrays(gl.TRIANGLES, 0, 3);

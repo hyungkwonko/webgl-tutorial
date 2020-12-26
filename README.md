@@ -18,6 +18,11 @@
 
 7. box with perspective
 
+8. moving the camera around
+
+9. point Cloud
+
+10. texture
 
 ## References & Tutorials
 
